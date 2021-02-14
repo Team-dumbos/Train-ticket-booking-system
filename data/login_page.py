@@ -3,20 +3,23 @@ try:
 	from data.helper_functions import *
 	from data.custom_grid import *
 	from data.constants import *
-	from data.register_page import *
+	from data.all_pages import *
 except:
 	from custom_grid import *
 	from constants import *
 	from helper_functions import *
-	from register_page import *
+	from all_pages import *
 from tkinter import *
 import os
 from PIL import ImageTk, Image
+import openpyxl
+from xlrd import open_workbook
+from tkinter import messagebox
 
 
 
 def get_login_page(root):
-
+	global username, password, login_page
 	username = StringVar(root)
 	password = StringVar(root)
 
@@ -35,17 +38,45 @@ def get_login_page(root):
 	passwd_entry = custom_entry(root, text= 'Password',textvariable = password,font = ('clean',12),placeholder = 'enter your password')
 	passwd_entry = custom_grid(passwd_entry,3,1,0,10)
 
-	login_button = Button(root,text="Login", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
+	login_button = Button(root,text="Login", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR, command = lambda : validate_user(root))
 	login_button = custom_grid(login_button,4,1,10,10)
 
 
-	register_button = Button(root,text = "New User? Register here",font = ('clean',13,'underline'), bg = MAIN_COLOR, fg = TERTIARY_COLOR, bd = 0, command = lambda: change_page(login_page,get_register_page(root)))
+	register_button = Button(root,text = "New User? Register here",font = ('clean',13,'underline'), bg = MAIN_COLOR, fg = TERTIARY_COLOR, bd = 0, command = lambda: change_page(login_page,get_page('register_page', root)))
 	register_button = custom_grid(register_button,5,1,10,10)
 
 	login_page = [user_image_label,user_name,username_entry,passwd,passwd_entry,login_button,register_button]
 	
 	return login_page
 
+def validate_user(root):
+	loc = os.path.join('data','user_details.xlsx')
+	workb = open_workbook(loc)
+	sheet1 = workb.sheet_by_index(0)
+	if username.get() is not None and password.get() is not None :
+		for i  in range(10000):
+			try:
+				user_val = sheet1.cell_value(i,0)
+			except:
+				continue
+
+			user_pass = sheet1.cell_value(i,4)
+			if user_val == username.get():
+				if user_pass == password.get():
+					print("Successfully login")
+					change_page(login_page, get_page('register_page', root))
+					break
+				else:
+					messagebox.showerror('error','Password is Invalid')
+					break
+		else:
+			messagebox.showerror("Error","Username is Invalid")
+
+	else:
+		messagebox.showinfo('Error','Please enter your username and password')
+
+	
+# to remove this main block
 if __name__ == '__main__':
 	root = Tk()
 	root.title('Login Page')

@@ -2,24 +2,35 @@ try:
 	from data.helper_functions import *
 	from data.custom_grid import *
 	from data.constants import *
+	from data.all_pages import *
 except:
 	from custom_grid import *
 	from constants import *
 	from helper_functions import *
+	from all_pages import *
 
 from tkinter import *
 from tkcalendar import Calendar, DateEntry
 import os
 from PIL import ImageTk, Image
 import openpyxl
+from tkinter import messagebox
+from threading import Thread
+from xlrd import open_workbook
+
+
+generated_otp = ''
+register_page = None
 
 def get_register_page(root):
+	global name,email, gender, date_of_birth, passw, confirm_password, otp, register_page
 	name = StringVar(root)
 	email = StringVar(root)
 	gender = StringVar(root)
 	date_of_birth = StringVar(root)
 	passw = StringVar(root)
 	confirm_password = StringVar(root)
+	otp = StringVar(root)
 
 	register_label = Label(root, text = "Register",font = ('clean',30), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
 	register_label = custom_grid(register_label,1,2,20,30)
@@ -62,10 +73,90 @@ def get_register_page(root):
 	confirm_password_entry = custom_entry(root,textvariable = confirm_password,font = ('clean',12),placeholder = "Confirm your password")
 	confirm_password_entry = custom_grid(confirm_password_entry,7,2,0,10)
 
+	otp_button = Button(root,text = "Send OTP", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR, command = lambda: send_otp())
+	otp_button = custom_grid(otp_button,8, 2, 0, 10)
+
+	otp_label = Label(root, text = "OTP:", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
+	otp_label = custom_grid(otp_label,9, 1, 30, 10)
+
+	otp_entry = custom_entry(root, textvariable = otp,font = ('clean',12),placeholder = "Enter the OTP")
+	otp_entry = custom_grid(otp_entry, 9, 2, 0, 10)
+
+	register_button = Button(root,text = "Register", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR, command = lambda: validate_data(root))
+	register_button = custom_grid(register_button,10, 2, 0, 10)
+	# print(get_login_page(root))
+
 	# go_to_login_button = Button(root,text = "Go to Login page")
 
-	return [register_label, name_label, email_label, gender_entry,	confirm_password_entry, confirm_password_label, password_label, password_entry, email_entry, name_entry,date_of_birth_label,date_of_birth_entry, gender_label]
+	register_page =  [register_label, name_label, email_label, otp_entry, otp_label, otp_button, gender_entry, register_button, confirm_password_entry, confirm_password_label, password_label, password_entry, email_entry, name_entry,date_of_birth_label,date_of_birth_entry, gender_label]
 
-def validate_data():
+	return register_page
+
+def validate_data(root):
 	#TODO on 13-02-2021
-	pass
+
+	name_value = name.get()
+	email_value = email.get()
+	date_of_birth_value = date_of_birth.get()
+	gender_value = gender.get()
+	password_value = passw.get()
+	confirm_password_value = confirm_password.get()
+	otp_value = otp.get()
+
+	if name_value == "Enter your name":
+		messagebox.showinfo('error','Please enter your name')
+		return
+
+	if email_value == "Enter your email":
+		messagebox.showinfo('error','Please enter your email')
+		return
+
+	if date_of_birth == "":
+		messagebox.showinfo('error','Please enter your date of birth')
+		return
+
+	if password_value == "Enter your password":
+		messagebox.showinfo('error','Please enter your password')
+		return
+
+	if password_value != confirm_password_value:
+		messagebox.showinfo('error','passwords do not match')
+		return
+
+	if otp_value != generated_otp:
+		messagebox.showinfo('error','OTP does not match')
+		return
+	save_register_details(root)
+	
+def send_otp():
+	global generated_otp
+	email_value = email.get()
+	generated_otp = generate_otp()
+
+	t = Thread(target = send_email, args = (email_value, generated_otp))
+	t.start()
+
+def save_register_details(root):
+	workb = open_workbook(os.path.join('data','user_details.xlsx'))
+	sheet1 = workb.sheet_by_index(0)
+
+	index = -1
+	#to find empty set in the workbook to write date
+	for i in range(10000):
+		try:
+			val = sheet1.cell_value(i,0)
+
+		except:
+			index = i
+			break
+
+	xfile = openpyxl.load_workbook(os.path.join('data','user_details.xlsx'),read_only = False)
+	sheet = xfile['users']
+	sheet[f'A{index+1}']=name.get()
+	sheet[f'B{index+1}'] = email.get()
+	sheet[f'C{index+1}']=gender.get()
+	sheet[f'D{index+1}']=date_of_birth.get()
+	sheet[f'E{index+1}']=passw.get()
+	xfile.save(os.path.join('data','user_details.xlsx'))
+	
+	change_page(register_page, get_page('login_page', root))
