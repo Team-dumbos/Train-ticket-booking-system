@@ -17,6 +17,7 @@ import openpyxl
 from tkinter import messagebox
 from threading import Thread
 from xlrd import open_workbook
+from shutil import copyfile
 
 
 generated_otp = ''
@@ -94,6 +95,7 @@ def get_register_page(root):
 
 def validate_data(root):
 	#TODO on 13-02-2021
+	global generated_otp
 
 	name_value = name.get()
 	email_value = email.get()
@@ -123,15 +125,35 @@ def validate_data(root):
 		messagebox.showinfo('error','passwords do not match')
 		return
 
-	if otp_value != generated_otp:
-		messagebox.showinfo('error','OTP does not match')
-		return
+	# if otp_value != generated_otp:
+	# 	messagebox.showinfo('error','OTP does not match')
+	# 	return
+
 	save_register_details(root)
 	
+def already_exists(email):
+	workb = open_workbook(os.path.join('data','user_details.xlsx'))
+	sheet1 = workb.sheet_by_index(0)
+
+	for i in range(10000):
+		try:
+			val = sheet1.cell_value(i,1)
+			if val == email:
+				return True
+		except:
+			return False
+	return False
+
 def send_otp():
 	global generated_otp
+
 	email_value = email.get()
 	generated_otp = generate_otp()
+
+	if already_exists(email_value):
+		messagebox.showinfo('error','Email already found')
+		generated_otp = generate_otp()
+		return
 
 	t = Thread(target = send_email, args = (email_value, generated_otp))
 	t.start()
@@ -160,3 +182,4 @@ def save_register_details(root):
 	xfile.save(os.path.join('data','user_details.xlsx'))
 	
 	change_page(register_page, get_page('login_page', root))
+	copyfile(os.path.join('data','dashboard_template.xlsx'),os.path.join('data','users',f'{email.get()}.xlsx'))
