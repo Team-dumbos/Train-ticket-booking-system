@@ -1,4 +1,4 @@
-from data.helper_functions import *
+from helper_functions import *
 
 
 def get_page(request, root):
