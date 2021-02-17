@@ -3,13 +3,11 @@ try:
 	from data.custom_grid import *
 	from data.constants import *
 	from data.all_pages import *
-	from data.datetime import *
 except:
 	from custom_grid import *
 	from constants import *
 	from helper_functions import *
 	from all_pages import *
-	from datetime import *
 from tkinter import *
 import os
 import datetime
@@ -23,14 +21,14 @@ def get_main_page(screen):
 	screen.geometry('1280x720')
 	screen.configure(bg = MAIN_COLOR)
 
-	clock1 = Clock(root)
-	clock1.pack()
-	date = dt.datetime.now()
-	# Takes the date and formats it.
-	format_date = f"{date:%a, %b %d %Y}"
+	# clock1 = Clock(root)
+	# clock1.pack()
+	date = datetime.datetime.now()
+	# # Takes the date and formats it.
+	# format_date = f"{date:%a, %b %d %Y}"
 
 
-	datetime1 = Label(screen, text = f"{date: %a, %b %d %Y}",font = ('clean',9), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
+	datetime1 = Label(screen, text = f"{date: %a, %b %d %Y %H:%M:%S}",font = ('clean',9), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
 	datetime1 = custom_grid(datetime1,0,30)
 
 
