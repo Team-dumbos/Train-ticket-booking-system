@@ -12,7 +12,7 @@ from tkinter import *
 import os
 import datetime
 
-def username_display():
+def user_display():
 	pass
 
 def get_main_page(screen): 
@@ -41,10 +41,10 @@ def get_main_page(screen):
 	booking = Button(screen,text="Train Ticket Booking",font = ('clean',15), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
 	booking= custom_grid(booking,5,0,20,20,10,10)
 
-	waiting = Button(screen,text = 'Waiting List',font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
-	waiting = custom_grid(waiting,7,0,20,20,10,10)
+	# waiting = Button(screen,text = 'Waiting List',font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR)
+	# waiting = custom_grid(waiting,7,0,20,20,10,10)
 
-	details = [title,dashboard,booking,waiting,datetime1]
+	details = [title,dashboard,booking,datetime1]
 
 	return details
 
