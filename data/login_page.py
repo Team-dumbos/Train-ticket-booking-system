@@ -15,6 +15,7 @@ from PIL import ImageTk, Image
 import openpyxl
 from xlrd import open_workbook
 from tkinter import messagebox
+import runpy
 
 
 
@@ -37,6 +38,8 @@ def get_login_page(root):
 	passwd = custom_grid(passwd,3,0,10,10)
 	passwd_entry = custom_entry(root, text= 'Password',textvariable = password,font = ('clean',12),placeholder = 'enter your password')
 	passwd_entry = custom_grid(passwd_entry,3,1,0,10)
+
+
 
 	login_button = Button(root,text="Login", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR, command = lambda : validate_user(root))
 	login_button = custom_grid(login_button,4,1,10,10)
@@ -64,7 +67,8 @@ def validate_user(root):
 			if user_val == username.get():
 				if user_pass == password.get():
 					print("Successfully login")
-					change_page(login_page, get_page('register_page', root))
+					# change_page(login_page, get_page('register_page', root))
+					runpy.run_path(os.path.join('data','main_page.py'))
 					break
 				else:
 					messagebox.showerror('error','Password is Invalid')

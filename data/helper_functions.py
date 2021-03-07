@@ -50,8 +50,8 @@ def get_image(path,height = None, width = None):
 	label1.image = image_cpy
 	return image_cpy
 
-def get_path(folder, file):
-	return os.path.join(folder,file)
+def get_path(*args):
+	return os.path.join(*args)
 
 def change_page(page1 = None,page2 = None,title = None):
 	#changes all contents from page1 to page2
@@ -95,3 +95,6 @@ def send_email(mail_id,valid_otp):
 		messagebox.showinfo('error','Not a valid email ID')
 	print('done')
 	return
+
+if __name__ == '__main__':
+	print(get_path('data','assets','login.png'))

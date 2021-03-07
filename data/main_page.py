@@ -17,7 +17,10 @@ def user_display():
 
 def get_main_page(screen): 
 	screen.title("Railway Reservation System")
-	screen.iconbitmap(os.path.join('assets', 'train-icon.ico'))
+	try:
+		screen.iconbitmap(os.path.join('data','assets', 'train-icon.ico'))
+	except:
+		screen.iconbitmap(os.path.join('assets', 'train-icon.ico'))
 	screen.geometry('1280x720')
 	screen.configure(bg = MAIN_COLOR)
 

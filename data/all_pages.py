@@ -1,4 +1,7 @@
-from helper_functions import *
+try:
+	from helper_functions import *
+except:
+	from data.helper_functions import *
 
 
 def get_page(request, root):
