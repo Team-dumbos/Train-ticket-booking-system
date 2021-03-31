@@ -40,7 +40,6 @@ def get_login_page(root):
 	passwd_entry = custom_grid(passwd_entry,3,1,0,10)
 
 
-
 	login_button = Button(root,text="Login", font = ('clean',13), bg = MAIN_COLOR, fg = TERTIARY_COLOR, command = lambda : validate_user(root))
 	login_button = custom_grid(login_button,4,1,10,10)
 
@@ -67,6 +66,7 @@ def validate_user(root):
 			if user_val == username.get():
 				if user_pass == password.get():
 					print("Successfully login")
+					root.destroy()
 					# change_page(login_page, get_page('register_page', root))
 					runpy.run_path(os.path.join('data','main_page.py'))
 					break
