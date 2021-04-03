@@ -58,16 +58,19 @@ def validate_user(root):
 	if username.get() is not None and password.get() is not None :
 		for i  in range(10000):
 			try:
-				user_val = sheet1.cell_value(i,0)
+				user_val = sheet1.cell_value(i,1)
 			except:
 				continue
 
-			user_pass = sheet1.cell_value(i,4)
+			user_pass = str(sheet1.cell_value(i,4))
+			print(user_pass)
 			if user_val == username.get():
 				if user_pass == password.get():
 					print("Successfully login")
 					root.destroy()
 					# change_page(login_page, get_page('register_page', root))
+					with open(get_path('data','session','user.txt'),'w+') as f:
+						f.write(username.get())
 					runpy.run_path(os.path.join('data','main_page.py'))
 					break
 				else:
